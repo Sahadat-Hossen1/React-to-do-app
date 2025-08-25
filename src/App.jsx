@@ -53,13 +53,18 @@ const App = () => {
   useEffect(()=>{
     const tasksLength=Tasks.length;
     const checked=Tasks.filter((task)=>task.checked===true).length;
-    setCheckedLength(checked);
-    if (tasksLength > 0 && tasksLength===checkedLength) {
-      alert('Good job man');
+    if (tasksLength > 0 && tasksLength===checked) {
+      return  alert('Good job man');
     }
+    setCheckedLength(checked);
 
-  })
-  // console.log(Tasks);
+  },[Tasks])
+  //for delete task 
+  const handleDelete=(index)=>{
+    const Delete=Tasks.filter((task,i)=>i!== index );
+    setTasks(Delete)
+  }
+  console.log(Tasks);
 
   return (
     <div className="max-w-[600px] mx-auto mt-4 px-2 rounded-2xl">
@@ -121,7 +126,7 @@ const App = () => {
                 <button className="btn btn-primary rounded-full px-4">
                   Edit
                 </button>
-                <button className="btn btn-error px-4">Delete</button>
+                <button className="btn btn-error px-4" onClick={()=>handleDelete(i)}>Delete</button>
               </div>
             </div>
           </div>
