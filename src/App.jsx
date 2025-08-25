@@ -50,21 +50,37 @@ const App = () => {
     });
     setTasks(check);
   };
-  useEffect(()=>{
-    const tasksLength=Tasks.length;
-    const checked=Tasks.filter((task)=>task.checked===true).length;
-    if (tasksLength > 0 && tasksLength===checked) {
-      return  alert('Good job man');
+  useEffect(() => {
+    const tasksLength = Tasks.length;
+    const checked = Tasks.filter((task) => task.checked === true).length;
+    if (tasksLength > 0 && tasksLength === checked) {
+      return alert("Good job man");
     }
     setCheckedLength(checked);
+  }, [Tasks]);
+  //for delete task
+  const handleDelete = (index) => {
+    const Delete = Tasks.filter((task, i) => i !== index);
+    setTasks(Delete);
+  };
+  //for edit button
+  const [editIndex, setEditIndex] = useState(null);
+  const [editText, setEditText] = useState("");
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setEditText(Tasks[index].TaskItem);
+  };
 
-  },[Tasks])
-  //for delete task 
-  const handleDelete=(index)=>{
-    const Delete=Tasks.filter((task,i)=>i!== index );
-    setTasks(Delete)
-  }
-  console.log(Tasks);
+ const handleSave=(index)=>{
+    const updateTask=Tasks.map((task,i)=> i===index ? {...task,TaskItem:editText}:task)
+    setTasks(updateTask);
+    setEditIndex(null)
+    setEditText('')
+ }
+ const handleCancel=()=>{
+  setEditIndex(null)
+  setEditText('')
+ }
 
   return (
     <div className="max-w-[600px] mx-auto mt-4 px-2 rounded-2xl">
@@ -89,8 +105,8 @@ const App = () => {
           </button>
         </form>
         <div className="pl-8">
-       <h1> total task:{Tasks.length} </h1>
-       <h1>completed task:{checkedLength} </h1>
+          <h1> total task:{Tasks.length} </h1>
+          <h1>completed task:{checkedLength} </h1>
         </div>
         {empty ? (
           <h1 className="text-center text-xl text-red-700">
@@ -108,6 +124,7 @@ const App = () => {
             className="card w-full bg-amber-300 mx-auto rounded-2xl shadow-md"
           >
             <div className="card-body flex flex-col md:flex-row md:flex-wrap items-center justify-between gap-3">
+              <h1>Task added time: {task.id.toLocaleString()} </h1>
               {/* Left side (checkbox + text) */}
               <div className="flex flex-row items-center gap-2 w-full md:flex-1 min-w-0">
                 <input
@@ -115,18 +132,52 @@ const App = () => {
                   checked={task.checked}
                   onChange={() => handleChecked(i)}
                 />
+                {
+                  editIndex ===i ? (
+                  <input
+                  value={editText}
+                  onChange={(e)=>setEditText(e.target.value)}
+                  />
 
-                <h1 className="bg-amber-100 px-2 py-1 rounded-md break-words truncate w-full">
+                  ):  (<h1 className="bg-amber-100 px-2 py-1 rounded-md break-words truncate w-full">
                   {task?.TaskItem}
-                </h1>
+                </h1>)
+                }
+              
               </div>
 
               {/* Right side (buttons) */}
               <div className="flex flex-row gap-2 w-full md:w-auto justify-end flex-shrink-0">
-                <button className="btn btn-primary rounded-full px-4">
-                  Edit
+                {editIndex === i ? (
+                  <div className="flex justify-between">
+                    <button
+                      className="btn btn-primary rounded-3xl"
+                      onClick={() => handleSave(i)}
+                    >
+                      save
+                    </button>
+                    <button
+                      className="btn btn-warning rounded-3xl "
+                      onClick={handleCancel}
+                    >
+                      clancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-primary rounded-full px-4"
+                    onClick={() => handleEdit(i)}
+                  >
+                    Edit
+                  </button>
+                )}
+
+                <button
+                  className="btn btn-error px-4"
+                  onClick={() => handleDelete(i)}
+                >
+                  Delete
                 </button>
-                <button className="btn btn-error px-4" onClick={()=>handleDelete(i)}>Delete</button>
               </div>
             </div>
           </div>
