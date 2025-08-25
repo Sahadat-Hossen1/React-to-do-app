@@ -3,9 +3,17 @@ import React, { useEffect, useState } from "react";
 const App = () => {
   //for all task
   const [Tasks, setTasks] = useState(() => {
-    //load the save task
-    return JSON.parse(localStorage.getItem("Tasks")) || [];
-  });
+//load the save task
+    const raw=localStorage.getItem("Tasks");
+if(!raw)return [];
+const save=JSON.parse(raw)
+    try{
+      return Array.isArray(save)?save:[];
+    }catch(error){
+      console.log(`error message is : ${error}`);
+      return [];
+    }
+  });  
   const [empty, setEmpty] = useState(false);
   //to get the task from input fild
   const handleSubmit = (e) => {
@@ -21,7 +29,10 @@ const App = () => {
       checked: false,
       id: new Date(),
     };
-    setTasks([...Tasks, newTask]);
+    setTasks((prevTask)=>{
+      const  tasksArray=Array.isArray(prevTask)?prevTask:[]
+      return [...tasksArray, newTask]
+    });
     setEmpty(false);
     form.todo.value=''
     console.log(newTask);
@@ -31,6 +42,9 @@ const App = () => {
     localStorage.setItem("Tasks",JSON.stringify(Tasks))
   },[Tasks])
   
+  // console.log(Array.isArray(Tasks));
+  console.log("Tasks value:", Tasks);
+// console.log("Type of Tasks:", typeof Tasks);
   
 
 
