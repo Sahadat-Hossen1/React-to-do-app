@@ -3,50 +3,63 @@ import React, { useEffect, useState } from "react";
 const App = () => {
   //for all task
   const [Tasks, setTasks] = useState(() => {
-//load the save task
-    const raw=localStorage.getItem("Tasks");
-if(!raw)return [];
-const save=JSON.parse(raw)
-    try{
-      return Array.isArray(save)?save:[];
-    }catch(error){
+    //load the save task
+    const raw = localStorage.getItem("Tasks");
+    if (!raw) return [];
+    const save = JSON.parse(raw);
+    try {
+      return Array.isArray(save) ? save : [];
+    } catch (error) {
       console.log(`error message is : ${error}`);
       return [];
     }
-  });  
+  });
   const [empty, setEmpty] = useState(false);
   //to get the task from input fild
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
     const getTask = form.todo.value.trim();
-    if (getTask === ""){
+    if (getTask === "") {
       setEmpty(true);
-       return
-      }
+      return;
+    }
     const newTask = {
       TaskItem: getTask,
       checked: false,
       id: new Date(),
     };
-    setTasks((prevTask)=>{
-      const  tasksArray=Array.isArray(prevTask)?prevTask:[]
-      return [...tasksArray, newTask]
+    setTasks((prevTask) => {
+      const tasksArray = Array.isArray(prevTask) ? prevTask : [];
+      return [...tasksArray, newTask];
     });
     setEmpty(false);
-    form.todo.value=''
+    form.todo.value = "";
     console.log(newTask);
   };
   //for save task when new task add and edit and delete
-  useEffect(()=>{
-    localStorage.setItem("Tasks",JSON.stringify(Tasks))
-  },[Tasks])
-  
-  // console.log(Array.isArray(Tasks));
-  console.log("Tasks value:", Tasks);
-// console.log("Type of Tasks:", typeof Tasks);
-  
+  useEffect(() => {
+    localStorage.setItem("Tasks", JSON.stringify(Tasks));
+  }, [Tasks]);
 
+  //for checkbox and check length
+  const [checkedLength, setCheckedLength] = useState(0);
+  const handleChecked = (index) => {
+    const check = Tasks.map((task, i) => {
+      return i === index ? { ...task, checked: !task.checked } : task;
+    });
+    setTasks(check);
+  };
+  useEffect(()=>{
+    const tasksLength=Tasks.length;
+    const checked=Tasks.filter((task)=>task.checked===true).length;
+    setCheckedLength(checked);
+    if (tasksLength > 0 && tasksLength===checkedLength) {
+      alert('Good job man');
+    }
+
+  })
+  // console.log(Tasks);
 
   return (
     <div className="max-w-[600px] mx-auto mt-4 px-2 rounded-2xl">
@@ -63,15 +76,57 @@ const save=JSON.parse(raw)
             name="todo"
             className="focus:outline-none focus:rounded-3xl pl-2 w-3/5"
           />
-          <button type="submit" className=" btn hover:btn-primary  rounded-3xl py-3 w-2/5">
+          <button
+            type="submit"
+            className=" btn hover:btn-primary  rounded-3xl py-3 w-2/5"
+          >
             add job
           </button>
         </form>
-        {
-           empty ? <h1 className="text-center text-xl text-red-700">write something in the input</h1>:""
-        }
+        <div className="pl-8">
+       <h1> total task:{Tasks.length} </h1>
+       <h1>completed task:{checkedLength} </h1>
+        </div>
+        {empty ? (
+          <h1 className="text-center text-xl text-red-700">
+            write something in the input
+          </h1>
+        ) : (
+          ""
+        )}
       </div>
+      {/*show the task item8*/}
+      <div className="flex flex-col gap-3 my-8 max-w-[550px] w-full px-4">
+        {Tasks?.map((task, i) => (
+          <div
+            key={i}
+            className="card w-full bg-amber-300 mx-auto rounded-2xl shadow-md"
+          >
+            <div className="card-body flex flex-col md:flex-row md:flex-wrap items-center justify-between gap-3">
+              {/* Left side (checkbox + text) */}
+              <div className="flex flex-row items-center gap-2 w-full md:flex-1 min-w-0">
+                <input
+                  type="checkbox"
+                  checked={task.checked}
+                  onChange={() => handleChecked(i)}
+                />
 
+                <h1 className="bg-amber-100 px-2 py-1 rounded-md break-words truncate w-full">
+                  {task?.TaskItem}
+                </h1>
+              </div>
+
+              {/* Right side (buttons) */}
+              <div className="flex flex-row gap-2 w-full md:w-auto justify-end flex-shrink-0">
+                <button className="btn btn-primary rounded-full px-4">
+                  Edit
+                </button>
+                <button className="btn btn-error px-4">Delete</button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
