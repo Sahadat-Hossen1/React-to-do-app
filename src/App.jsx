@@ -121,10 +121,10 @@ const App = () => {
         {Tasks?.map((task, i) => (
           <div
             key={i}
-            className="card w-full bg-amber-300 mx-auto rounded-2xl shadow-md"
+            className="card w-full bg-amber-300 mx-auto rounded-2xl shadow-md text-xl"
           >
-            <div className="card-body flex flex-col md:flex-row md:flex-wrap items-center justify-between gap-3">
-              <h1>Task added time: {task.id.toLocaleString()} </h1>
+            <div className="card-body flex flex-col  md:flex-wrap items-center gap-3">
+              <h1 className="text-lg ">Task added time: {task.id.toLocaleString()} </h1>
               {/* Left side (checkbox + text) */}
               <div className="flex flex-row items-center gap-2 w-full md:flex-1 min-w-0">
                 <input
@@ -137,9 +137,10 @@ const App = () => {
                   <input
                   value={editText}
                   onChange={(e)=>setEditText(e.target.value)}
+                  className="text-xl  px-2 bg-amber-100 rounded-xl w-full focus:outline-none "
                   />
 
-                  ):  (<h1 className="bg-amber-100 px-2 py-1 rounded-md break-words truncate w-full">
+                  ):  (<h1 className="bg-amber-100 text-xl px-2 py-1 rounded-md break-words truncate w-full">
                   {task?.TaskItem}
                 </h1>)
                 }
