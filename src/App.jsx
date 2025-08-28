@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 const App = () => {
+    const [message,setmessage]=useState('')
+
   //for all task
   const [Tasks, setTasks] = useState(() => {
     //load the save task
@@ -11,10 +13,13 @@ const App = () => {
       return Array.isArray(save) ? save : [];
     } catch (error) {
       console.log(`error message is : ${error}`);
+      
       return [];
     }
   });
+  // localStorage.removeItem('Tasks')
   const [empty, setEmpty] = useState(false);
+
   //to get the task from input fild
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -44,6 +49,7 @@ const App = () => {
 
   //for checkbox and check length
   const [checkedLength, setCheckedLength] = useState(0);
+
   const handleChecked = (index) => {
     const check = Tasks.map((task, i) => {
       return i === index ? { ...task, checked: !task.checked } : task;
@@ -54,7 +60,12 @@ const App = () => {
     const tasksLength = Tasks.length;
     const checked = Tasks.filter((task) => task.checked === true).length;
     if (tasksLength > 0 && tasksLength === checked) {
-      return alert("Good job man");
+      // return alert("Good job man");
+      setmessage('Good job man')
+      setTimeout(() => {
+setmessage('')
+      }, 1000);
+
     }
     setCheckedLength(checked);
   }, [Tasks]);
@@ -82,9 +93,13 @@ const App = () => {
   setEditText('')
  }
 
+
   return (
     <div className="max-w-[600px] mx-auto mt-4 px-2 rounded-2xl">
-      {/* for title and form section */}
+      {
+        message ?(<h1 className="mx-auto fixed top-4 left-[650px] z-50 bg-primary text-amber-200 px-3 py-2 rounded-3xl text-2xl transition-all delay-1000 ">{message} </h1>):("")
+      }
+        
       <div className=" bg-amber-400 rounded-4xl py-2 ">
         <h1 className="text-center py-4 text-3xl">ToDo-List</h1>
         <form
